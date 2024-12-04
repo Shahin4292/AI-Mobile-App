@@ -1,8 +1,45 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_generative_ai/google_generative_ai.dart';
 
-class HomePages extends StatelessWidget {
+import '../models/chat_message_model.dart';
+
+class HomePages extends StatefulWidget {
   const HomePages({super.key});
+
+  @override
+  State<HomePages> createState() => _HomePagesState();
+}
+
+class _HomePagesState extends State<HomePages> {
+  TextEditingController chatController = TextEditingController();
+  static const apiKey = "AIzaSyD8vdVrEF0XOysW6SNaq1LdnQuypkJPfHY";
+  final model = GenerativeModel(model: "Gemini", apiKey: apiKey);
+  final List<ModelMessage> prompt = [];
+  final bool isLoading = true;
+
+  Future<void> sentMessage() async {
+    final message = chatController.text;
+    setState(() {
+      prompt.add(
+        ModelMessage(
+          isPrompt: true,
+          message: message,
+          time: DateTime.now(),
+        ),
+      );
+    });
+    final content = [Content.text(message)];
+    final response = await model.generateContent(content);
+    setState(() {
+      prompt.add(
+        ModelMessage(
+          isPrompt: false,
+          message: response.text ?? "",
+          time: DateTime.now(),
+        ),
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +65,7 @@ class HomePages extends StatelessWidget {
                   Text(
                     "Gemini",
                     style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 17,
                         color: Colors.white,
                         fontWeight: FontWeight.bold),
                   ),
@@ -39,7 +76,13 @@ class HomePages extends StatelessWidget {
                 ],
               ),
             ),
-            Expanded(child: ListView()),
+            Expanded(
+                child: ListView.builder(
+                    itemCount: prompt.length,
+                    itemBuilder: (context, index) {
+                      final chatMessage = prompt[index];
+                      return UserPrompt(context, chatMessage);
+                    })),
             Container(
               padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 16),
               // height: 120,
@@ -48,6 +91,7 @@ class HomePages extends StatelessWidget {
                 children: [
                   Expanded(
                     child: TextField(
+                      controller: chatController,
                       style: const TextStyle(color: Colors.black),
                       cursorColor: Theme.of(context).primaryColor,
                       decoration: InputDecoration(
@@ -66,19 +110,24 @@ class HomePages extends StatelessWidget {
                   const SizedBox(
                     width: 10,
                   ),
-                  CircleAvatar(
-                    radius: 33,
-                    backgroundColor: Colors.white,
+                  InkWell(
+                    onTap: () {
+                      sentMessage();
+                    },
                     child: CircleAvatar(
-                      radius: 30,
-                      backgroundColor: Colors.grey[900],
-                      child: const Center(
-                          child: Image(
-                        image: AssetImage("assets/icon.png"),
-                        height: 35,
-                        width: 35,
-                        // color: Colors.white,
-                      )),
+                      radius: 33,
+                      backgroundColor: Colors.white,
+                      child: CircleAvatar(
+                        radius: 30,
+                        backgroundColor: Colors.grey[900],
+                        child: const Center(
+                            child: Image(
+                          image: AssetImage("assets/icon.png"),
+                          height: 35,
+                          width: 35,
+                          // color: Colors.white,
+                        )),
+                      ),
                     ),
                   )
                 ],
@@ -86,6 +135,25 @@ class HomePages extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Container UserPrompt(BuildContext context, ModelMessage chatMessage) {
+    return Container(
+      width: MediaQuery.sizeOf(context).width,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            chatMessage.message,
+            style: TextStyle(
+                fontWeight: isLoading ? FontWeight.bold : FontWeight.normal,
+                fontSize: 18,
+                color: isLoading ? Colors.white : Colors.black),
+          ),
+        ],
       ),
     );
   }
