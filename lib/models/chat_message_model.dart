@@ -1,12 +1,12 @@
-class ChatMessageModel {
-  final String role;
-  final List<ChatPartModel> parts;
 
-  ChatMessageModel({required this.role, required this.parts});
-}
+class ModelMessage {
+  final bool isPrompt;
+  final String message;
+  final DateTime time;
 
-class ChatPartModel {
-  final String text;
-
-  ChatPartModel({required this.text});
+  ModelMessage({
+    required this.isPrompt,
+    required this.message,
+    required this.time,
+  });
 }
