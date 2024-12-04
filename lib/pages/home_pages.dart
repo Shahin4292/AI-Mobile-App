@@ -94,10 +94,10 @@ class _HomePagesState extends State<HomePages> {
                             controller.sentMessage();
                         },
                         child: CircleAvatar(
-                          radius: 30,
+                          radius: 26,
                           backgroundColor: Colors.white,
                           child: CircleAvatar(
-                            radius: 28,
+                            radius: 24,
                             backgroundColor: Colors.grey[900],
                             child: const Center(
                                 child: Image(
