@@ -14,7 +14,7 @@ class HomePages extends StatefulWidget {
 class _HomePagesState extends State<HomePages> {
   TextEditingController chatController = TextEditingController();
   static const apiKey = "AIzaSyD8vdVrEF0XOysW6SNaq1LdnQuypkJPfHY";
-  final model = GenerativeModel(model: "Gemini", apiKey: apiKey);
+  final model = GenerativeModel(model: "gemini-pro", apiKey: apiKey);
   final List<ModelMessage> prompt = [];
 
   Future<void> sentMessage() async {
@@ -152,7 +152,7 @@ class _HomePagesState extends State<HomePages> {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
           color: isLoading ? Colors.green : Colors.grey,
-          borderRadius: BorderRadius.circular(2)),
+          borderRadius: BorderRadius.circular(20)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
