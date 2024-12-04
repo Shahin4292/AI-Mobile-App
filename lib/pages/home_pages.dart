@@ -20,6 +20,7 @@ class _HomePagesState extends State<HomePages> {
   Future<void> sentMessage() async {
     final message = chatController.text;
     setState(() {
+      chatController.clear();
       prompt.add(
         ModelMessage(
           isPrompt: true,
@@ -149,10 +150,17 @@ class _HomePagesState extends State<HomePages> {
       required String date}) {
     return Container(
       width: MediaQuery.sizeOf(context).width,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(15),
+      margin: const EdgeInsets.symmetric(vertical: 15)
+          .copyWith(left: isLoading ? 80 : 15, right: isLoading ? 15 : 80),
       decoration: BoxDecoration(
           color: isLoading ? Colors.green : Colors.grey,
-          borderRadius: BorderRadius.circular(20)),
+          borderRadius: BorderRadius.only(
+            topLeft: const Radius.circular(20),
+            topRight: const Radius.circular(20),
+            bottomLeft: isLoading ? const Radius.circular(20) : Radius.zero,
+            bottomRight: isLoading ? Radius.zero : const Radius.circular(20),
+          )),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
