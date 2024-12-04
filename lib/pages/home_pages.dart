@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:intl/intl.dart';
 
 import '../models/chat_message_model.dart';
 
@@ -15,7 +16,6 @@ class _HomePagesState extends State<HomePages> {
   static const apiKey = "AIzaSyD8vdVrEF0XOysW6SNaq1LdnQuypkJPfHY";
   final model = GenerativeModel(model: "Gemini", apiKey: apiKey);
   final List<ModelMessage> prompt = [];
-  final bool isLoading = true;
 
   Future<void> sentMessage() async {
     final message = chatController.text;
@@ -81,7 +81,11 @@ class _HomePagesState extends State<HomePages> {
                     itemCount: prompt.length,
                     itemBuilder: (context, index) {
                       final chatMessage = prompt[index];
-                      return UserPrompt(context, chatMessage);
+                      return UserPrompt(
+                          isLoading: chatMessage.isPrompt,
+                          message: chatMessage.message,
+                          date:
+                              DateFormat("hh: mm: a").format(chatMessage.time));
                     })),
             Container(
               padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 16),
@@ -139,18 +143,31 @@ class _HomePagesState extends State<HomePages> {
     );
   }
 
-  Container UserPrompt(BuildContext context, ModelMessage chatMessage) {
+  Container UserPrompt(
+      {required final bool isLoading,
+      required String message,
+      required String date}) {
     return Container(
       width: MediaQuery.sizeOf(context).width,
       padding: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+          color: isLoading ? Colors.green : Colors.grey,
+          borderRadius: BorderRadius.circular(2)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            chatMessage.message,
+            message,
             style: TextStyle(
                 fontWeight: isLoading ? FontWeight.bold : FontWeight.normal,
                 fontSize: 18,
+                color: isLoading ? Colors.white : Colors.black),
+          ),
+          Text(
+            date,
+            style: TextStyle(
+                // fontWeight: isLoading ? FontWeight.bold : FontWeight.normal,
+                fontSize: 14,
                 color: isLoading ? Colors.white : Colors.black),
           ),
         ],
